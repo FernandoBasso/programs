@@ -1,0 +1,73 @@
+= Dreamweaver .ste Data
+
+Small script to read a dreamweaver .ste file and extract ftp information,
+especially, decrypt the password.
+
+Currently, dreamweaver .ste xml files have a tag called `server` that stores
+ftp information. That tag contains attributes like `host`, `user`, `pw`
+and `remoteroot`.
+
+== JavaScript Version
+
+This small scritp uses regex to parse the .ste file to avoid requiring
+us to install a third-party xml library. It works for my personal needs.
+
+How to use:
+
+    node parseinfo.js file.ste
+
+
+== C Version 1
+
+For the C version, install libxml2:
+
+Arch Linux:
+
+    pacman -S libxml2
+
+
+Debian/Ubuntu/Mint
+
+    apt-get install libxml2 libxml2-dev
+
+
+Compile with:
+
+    gcc -std=c99 -W -Wall -pedantic \
+        $(xml2-config --cflags) \
+        $(xml2-config --libs) \
+        parseinfo.c -o parseinfo
+        -lxml2
+
+Run the program:
+
+    ./parseinfo file.ste
+
+.example output for parseinfo:
+----
+host ---------: foo.bar.net
+user ---------: ftpuser
+plainPass ----: 1234
+remoteroot ---: public_html/blog
+----
+
+
+== C Version 2 (vim-uploader)
+
+This version is very similar to v1, except that it outputs the information
+in a vim hash syntax so that I can just use for my
+https://github.com/FernandoBasso/vim-uploader[vim-uploader plugin].
+
+.example output for dwste2vim:
+----
+\ '??? project name ???': {
+    \ 'host': 'foo.bar.net',
+    \ 'user': 'ftuser',
+    \ 'pass': '1234',
+    \ 'ldir': '???', 
+    \ 'rdir': 'public_html/blog'
+\ },
+----
+
+May the source be with you.
+
